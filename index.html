@@ -47,6 +47,10 @@
             button:hover {
                 background-color: #0f4fae;
             }
+
+            .whitelist-link {
+                font-size: 0.9rem;
+            }
         </style>
     </head>
     <body>
@@ -57,6 +61,7 @@
             <label for="password">Password:</label>
             <input id="password" name="password" type="password" required>
             <button type="submit">Continue</button>
+            <a class="whitelist-link" href="bypass.html">Are you whitelisted?</a>
             <p id="error-message" role="alert" hidden>Incorrect password.</p>
         </form>
 
