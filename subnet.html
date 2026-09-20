@@ -4,8 +4,19 @@
         <title>Home</title>
         <link rel="icon" href="favicon.png" type="image/png">
         <style>
+            :root {
+                color-scheme: light;
+                font-family: Arial, sans-serif;
+            }
+
             body {
                 align-items: center;
+                background-color: #203040;
+                background-image: url("background.jpg");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+                box-sizing: border-box;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -13,6 +24,30 @@
                 min-height: 100vh;
                 padding: 24px;
                 text-align: center;
+            }
+
+            .content-panel {
+                align-items: center;
+                background-color: rgba(255, 255, 255, 0.82);
+                border: 1px solid rgba(255, 255, 255, 0.7);
+                border-radius: 12px;
+                box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                max-width: 680px;
+                padding: 40px;
+                width: 100%;
+            }
+
+            h1 {
+                margin: 0 0 16px;
+            }
+
+            p {
+                line-height: 1.5;
+                margin: 0 0 24px;
+                max-width: 560px;
             }
 
             button,
@@ -35,14 +70,22 @@
             .button-link:hover {
                 background-color: #0f4fae;
             }
+
+            @media (max-width: 560px) {
+                .content-panel {
+                    padding: 28px 20px;
+                }
+            }
         </style>
     </head>
     <body>
-        <h1>Home</h1>
-        <p>You have successfully reached the online subnet of the RS-Intranet. Use some buttons below to navigate to your desired resource.</p>
-        <button>Windows 11</button>
-        <button>Windows 10</button>
-        <button>macOS X Catalina</button>
-        <a class="button-link" href="exclusion.html">Connection Node</a>
+        <main class="content-panel">
+            <h1>Home</h1>
+            <p>You have successfully reached the online subnet of the RS-Intranet. Use some buttons below to navigate to your desired resource.</p>
+            <button>Windows 11</button>
+            <button>Windows 10</button>
+            <button>macOS X Catalina</button>
+            <a class="button-link" href="exclusion.html">Connection Node</a>
+        </main>
     </body>
 </html>
