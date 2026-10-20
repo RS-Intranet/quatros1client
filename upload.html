@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Upload your file</title>
+        <link rel="icon" href="favicon.png" type="image/png">
+        <style>
+            body {
+                align-items: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                margin: 0;
+                min-height: 100vh;
+                padding: 24px;
+                text-align: center;
+            }
 
+            button {
+                background-color: #1769e0;
+                color: #ffffff;
+                border: 0;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1.1rem;
+                font-weight: 700;
+                margin: 6px;
+                min-height: 52px;
+                padding: 12px 32px;
+                width: min(100%, 420px);
+            }
+
+            button a {
+                color: #ffffff;
+                text-decoration: none;
+            }
+
+            button:hover {
+                background-color: #0f4fae;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Connect to PaliServer3</h1>
+        <p>Upload your file here!</p>
+        <p>You can choose to contribute to the Intranet's subnet by uploading a file that you want included in the page.</p>
+        <p>Find the hotspot and connect to it. Switch networks while staying on this page.</p>
+        <button onclick="location.href='subnet.html'">Back</button>
+      <form action="https://formspree.io" method="POST" enctype="multipart/form-data">
+        <label>
+        Upload your file:
+        <input type="file" name="upload">
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    </body>
+</html>
