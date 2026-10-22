@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>500 Error</title>
+    <style>
+      :root {
+        --blue: #0a66ff;
+        --blue-dark: #0849c6;
+        --text: #1f2a37;
+        --bg: #f4f8ff;
+        --panel: #edf4ff;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+        font-family: Arial, Helvetica, sans-serif;
+        color: var(--text);
+      }
+
+      .error-page {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        background: #ffffff;
+      }
+
+      .left-panel {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--panel);
+        padding: 40px;
+      }
+
+      .left-panel img {
+        max-width: 84%;
+        height: auto;
+        display: block;
+      }
+
+      .right-panel {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 80px 70px;
+      }
+
+      .back-button {
+        position: absolute;
+        top: 28px;
+        left: 28px;
+        background: transparent;
+        border: 2px solid var(--blue);
+        color: var(--blue);
+        border-radius: 999px;
+        font-size: 1rem;
+        font-weight: 700;
+        padding: 10px 22px;
+        cursor: default;
+        text-decoration: none;
+        line-height: 1;
+      }
+
+      .error-code {
+        font-size: clamp(7rem, 17vw, 18rem);
+        line-height: 0.8;
+        font-weight: 900;
+        letter-spacing: -0.08em;
+        color: var(--blue);
+        margin: 0 0 20px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 3vw, 3rem);
+        line-height: 1.1;
+        color: var(--text);
+      }
+
+      p {
+        margin: 0;
+        font-size: 1.15rem;
+        line-height: 1.6;
+        color: #4d5a6d;
+        max-width: 540px;
+      }
+
+      @media (max-width: 760px) {
+        .error-page {
+          flex-direction: column;
+        }
+
+        .left-panel,
+        .right-panel {
+          width: 100%;
+          flex: auto;
+        }
+
+        .left-panel {
+          min-height: 40vh;
+        }
+
+        .right-panel {
+          padding: 60px 30px 50px;
+        }
+
+        .back-button {
+          top: 18px;
+          left: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-page">
+      <button type="button" class="back-button">Back</button>
+
+      <div class="left-panel">
+        <img src="computerasset.png" alt="Computer asset illustration" />
+      </div>
+
+      <div class="right-panel">
+        <div class="error-code">500</div>
+        <h1>Something went wrong</h1>
+        <p>
+          We are experiencing an unexpected server error at the moment. This is probably permanent. Come check back for an update to the server system.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
