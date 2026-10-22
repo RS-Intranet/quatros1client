@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Server Portal</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #203040;
+        background-image: url("mathassets.jpg");
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        padding: clamp(18px, 4vw, 32px);
+        text-align: center;
+      }
+
+      .content-panel {
+        width: min(100%, 680px);
+        background-color: rgba(255, 255, 255, 0.82);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 12px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+        padding: clamp(24px, 5vw, 40px);
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-size: clamp(1.9rem, 4vw, 2.7rem);
+      }
+
+      p {
+        line-height: 1.5;
+        margin: 0 0 18px;
+        max-width: 560px;
+        font-size: clamp(1rem, 2vw, 1.1rem);
+      }
+
+      .button-link {
+        display: block;
+        width: min(100%, 420px);
+        margin: 8px auto;
+        background-color: #1769e0;
+        border: 0;
+        border-radius: 8px;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 1.05rem;
+        font-weight: 700;
+        min-height: 52px;
+        padding: 12px 24px;
+        text-decoration: none;
+        line-height: 1.4;
+      }
+
+      .button-link:hover {
+        background-color: #0f4fae;
+      }
+
+      @media (max-width: 560px) {
+        .content-panel {
+          padding: 22px 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="content-panel">
+      <h1>PaliServer Connection Portal</h1>
+      <p>The PaliServer Portal is a utility to help connect your computer to the Mainland and Legacy Intranet. Choose a server here.</p>
+      <p>ANNOUNCEMENT: The RS-Intranet has been restored to full operation. The Mainland and Subnet have no risk of shutdown.</p>
+      <a class="button-link" href="exclusion.html">Connect to Mainland</a>
+      <a class="button-link" href="pencils.html">Connect to Pencil Pouch</a>
+      <a class="button-link" href="subnet.html">Back</a>
+    </main>
+  </body>
+</html>
