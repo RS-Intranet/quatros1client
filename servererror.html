@@ -7,16 +7,21 @@
     <style>
       :root {
         --blue: #0a66ff;
-        --blue-dark: #0849c6;
         --text: #1f2a37;
         --bg: #f4f8ff;
         --panel: #edf4ff;
       }
 
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+      }
 
       body {
-        margin: 0;
         min-height: 100vh;
         display: flex;
         align-items: center;
@@ -45,6 +50,7 @@
 
       .left-panel img {
         max-width: 84%;
+        width: 100%;
         height: auto;
         display: block;
       }
@@ -68,9 +74,11 @@
         font-size: 1rem;
         font-weight: 700;
         padding: 10px 22px;
-        cursor: default;
-        text-decoration: none;
         line-height: 1;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .error-code {
@@ -110,10 +118,11 @@
 
         .left-panel {
           min-height: 40vh;
+          padding: 24px;
         }
 
         .right-panel {
-          padding: 60px 30px 50px;
+          padding: 60px 24px 50px;
         }
 
         .back-button {
@@ -125,7 +134,7 @@
   </head>
   <body>
     <div class="error-page">
-      <button type="button" class="back-button" href="tools.html">Back</button>
+      <a class="back-button" href="tools.html">Back</a>
 
       <div class="left-panel">
         <img src="computerasset.png" alt="Computer asset illustration" />
@@ -135,7 +144,8 @@
         <div class="error-code">500</div>
         <h1>Something went wrong</h1>
         <p>
-          We are experiencing an unexpected server error at the moment. This is probably permanent. Come check back for an update to the server system.
+          We are experiencing an unexpected server error at the moment. This is probably permanent.
+          Come check back for an update to the server system.
         </p>
       </div>
     </div>

@@ -1,54 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Connect to PaliServer3</title>
-        <link rel="icon" href="favicon.png" type="image/png">
-        <style>
-            body {
-                align-items: center;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                margin: 0;
-                min-height: 100vh;
-                padding: 24px;
-                text-align: center;
-            }
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Connect to PaliServer3</title>
+    <link rel="icon" href="favicon.png" type="image/png" />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Arial, sans-serif;
+      }
 
-            button {
-                background-color: #1769e0;
-                color: #ffffff;
-                border: 0;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 1.1rem;
-                font-weight: 700;
-                margin: 6px;
-                min-height: 52px;
-                padding: 12px 32px;
-                width: min(100%, 420px);
-            }
+      * {
+        box-sizing: border-box;
+      }
 
-            button a {
-                color: #ffffff;
-                text-decoration: none;
-            }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: clamp(18px, 4vw, 32px);
+        text-align: center;
+        background: #f3f7ff;
+        color: #1c2736;
+      }
 
-            button:hover {
-                background-color: #0f4fae;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Connect to PaliServer3</h1>
-        <p>You have reached the portal to connect to PaliServer3, the pencil server.</p>
-        <p>To initiate a successful connection, you must be in range of the hotspot labeled 'RS-Intranet' in your network list.</p>
-        <p>Note: This server is almost always inactive. Looking for the Mainland Intranet? Go back to the homepage and click 'Connect to Mainland'</p>
-        <p>Find the hotspot and connect to it. Switch networks while staying on this page.</p>
-        <button onclick="location.href='subnet.html'">Back</button>
-        <button onclick="location.href='http://10.0.0.1'">Connect to Pencil Pouch</button>
-    </body>
+      main {
+        width: min(100%, 720px);
+      }
+
+      h1 {
+        margin: 0 0 16px;
+        font-size: clamp(1.9rem, 4vw, 2.8rem);
+      }
+
+      p {
+        margin: 0 0 12px;
+        line-height: 1.6;
+        font-size: clamp(1rem, 2vw, 1.15rem);
+      }
+
+      button {
+        display: block;
+        width: min(100%, 420px);
+        margin: 8px auto;
+        min-height: 52px;
+        border: 0;
+        border-radius: 8px;
+        background: #1769e0;
+        color: #fff;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 12px 24px;
+      }
+
+      button:hover {
+        background: #0f4fae;
+      }
+
+      @media (max-width: 560px) {
+        body {
+          padding: 20px 14px;
+        }
+
+        p {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Connect to PaliServer3</h1>
+      <p>You have reached the portal to connect to PaliServer3, the pencil server.</p>
+      <p>To initiate a successful connection, you must be in range of the hotspot labeled 'RS-Intranet' in your network list.</p>
+      <p>Note: This server is almost always inactive. Looking for the Mainland Intranet? Go back to the homepage and click 'Connect to Mainland'</p>
+      <p>Find the hotspot and connect to it. Switch networks while staying on this page.</p>
+      <button onclick="location.href='subnet.html'">Back</button>
+      <button onclick="location.href='http://10.0.0.1'">Connect to Pencil Pouch</button>
+    </main>
+  </body>
 </html>
