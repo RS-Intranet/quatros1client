@@ -51,10 +51,19 @@
         font-size: clamp(1rem, 2vw, 1.1rem);
       }
 
+      .button-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+
       .button-link {
-        display: block;
-        width: min(100%, 420px);
-        margin: 8px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        margin: 0;
         background-color: #1769e0;
         border: 0;
         border-radius: 8px;
@@ -63,7 +72,7 @@
         font-size: 1.05rem;
         font-weight: 700;
         min-height: 52px;
-        padding: 12px 24px;
+        padding: 12px 16px;
         text-decoration: none;
         line-height: 1.4;
       }
@@ -84,13 +93,15 @@
       <h1>Tools</h1>
       <p>Browse the tools and games on the site.</p>
       <p>ANNOUNCEMENT: The RS-Intranet has been restored to full operation. The Mainland and Subnet have no risk of shutdown.</p>
-      <a class="button-link" href="https://www.hoodamath.com/games/snowrider3d.html#gsc.tab=0">Snow Rider</a>
-      <a class="button-link" href="https://www.mortgagecalculator.org/money-games/drift-boss/">Drift Boss</a>
-      <a class="button-link" href="https://sites.google.com/wvhs.wlwv.k12.or.us/noahhuntgames/moto-x3m?pli=1&authuser=0">Moto x3m</a>
-      <a class="button-link" href="https://www.mortgagecalculator.org/money-games/ovo/">OVO</a>
-      <a class="button-link" href="https://browsercraft.cheerpj.com/">Minecraft</a>
-      <a class="button-link" href="https://sites.google.com/view/drive-u-7-home/paper-io-2?pli=1&authuser=0">Paper IO</a>
-      <a class="button-link" href="subnet.html">Back to Home</a>
+      <div class="button-grid">
+        <a class="button-link" href="https://www.hoodamath.com/games/snowrider3d.html#gsc.tab=0">Snow Rider</a>
+        <a class="button-link" href="https://www.mortgagecalculator.org/money-games/drift-boss/">Drift Boss</a>
+        <a class="button-link" href="https://sites.google.com/wvhs.wlwv.k12.or.us/noahhuntgames/moto-x3m?pli=1&authuser=0">Moto x3m</a>
+        <a class="button-link" href="https://www.mortgagecalculator.org/money-games/ovo/">OVO</a>
+        <a class="button-link" href="https://browsercraft.cheerpj.com/">Minecraft</a>
+        <a class="button-link" href="https://sites.google.com/view/drive-u-7-home/paper-io-2?pli=1&authuser=0">Paper IO</a>
+        <a class="button-link" href="subnet.html">Back to Home</a>
+      </div>
     </main>
   </body>
 </html>
