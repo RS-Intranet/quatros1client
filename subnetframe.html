@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Page Iframe</title>
+    <style>
+        /* Remove default margins, padding, and scrollbars from the main page */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #000000; /* Optional: background color while loading */
+        }
+
+        /* Force the iframe to fill the exact dimensions of the browser viewport */
+        iframe {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 
+      Replace the 'src' URL with the website you want to display.
+      The 'title' attribute is required for web accessibility.
+    -->
+    <iframe 
+        src="https://example.com" 
+        title="Full Screen Embedded Content">
+    </iframe>
+
+</body>
+</html>
