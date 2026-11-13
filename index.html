@@ -1,51 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0; url=subnet.html" />
-    <style>
-      :root {
-        color-scheme: light;
-        font-family: Arial, sans-serif;
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto-Redirect QR Code Scanner</title>
+  <!-- Load html5-qrcode from CDN -->
+  <script src="https://unpkg.com" type="text/javascript"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      background-color: #f9fafb;
+      color: #111827;
+    }
+    .scanner-container {
+      width: 100%;
+      max-width: 500px;
+      background: #ffffff;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    #reader {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    #result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f3f4f6;
+      border-radius: 8px;
+      word-break: break-all;
+      font-size: 0.95rem;
+    }
+    .result-label {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+  </style>
+</head>
+<body>
 
-      * {
-        box-sizing: border-box;
-      }
+  <div class="scanner-container">
+    <h2>QR Code Scanner</h2>
+    <!-- Scanner UI renders inside this div -->
+    <div id="reader"></div>
 
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f3f7ff;
-        color: #1c2736;
-        padding: 24px;
-        text-align: center;
-      }
+    <!-- Status and fallback output displays here -->
+    <div id="result">
+      <span class="result-label">Status:</span>
+      <span id="result-text">Waiting for scan...</span>
+    </div>
+  </div>
 
-      p {
-        max-width: 520px;
-        margin: 0;
-        font-size: clamp(1rem, 2vw, 1.15rem);
-        line-height: 1.6;
-      }
+  <script>
+    let isRedirecting = false;
 
-      a {
-        color: #1769e0;
+    const html5QrcodeScanner = new Html5QrcodeScanner(
+      "reader",
+      { 
+        fps: 10, 
+        qrbox: { width: 250, height: 250 } 
+      },
+      /* verbose= */ false
+    );
+
+    function onScanSuccess(decodedText, decodedResult) {
+      // Prevent duplicate triggers while redirecting
+      if (isRedirecting) return;
+
+      const resultText = document.getElementById("result-text");
+
+      // Check if the scanned text is a valid web URL
+      if (decodedText.startsWith("http://") || decodedText.startsWith("https://")) {
+        isRedirecting = true;
+        resultText.textContent = `Redirecting to ${decodedText}...`;
+        
+        // Stop camera/scanner cleanly before navigating away
+        html5QrcodeScanner.clear().catch(() => {});
+        
+        // Redirect the browser to the scanned URL
+        window.location.href = decodedText;
+      } else {
+        // Fallback if the QR code contains plain text instead of a link
+        resultText.textContent = `Scanned non-URL text: ${decodedText}`;
       }
-    </style>
-    <script>
-      window.location.href = "subnet.html";
-    </script>
-  </head>
-  <body>
-    <p>
-      If you are not redirected automatically, follow this
-      <a href="subnet.html">link to subnet.html</a>.
-    </p>
-  </body>
+    }
+
+    function onScanFailure(error) {
+      // Ignored to prevent console spam while searching for a QR code
+    }
+
+    html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+  </script>
+
+</body>
 </html>
