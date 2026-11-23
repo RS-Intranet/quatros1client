@@ -89,5 +89,28 @@
       <a class="button-link" href="https://copy.sh/v86/?profile=windows95">Windows On Chromebook</a>
       <a class="button-link" href="servers.html">Connect to PaliServer</a>
     </main>
+    <script>
+let typed = "";
+
+document.addEventListener("keydown", function(event) {
+
+    if (
+        event.target.tagName === "INPUT" ||
+        event.target.tagName === "TEXTAREA" ||
+        event.target.isContentEditable
+    ) return;
+
+    if (event.key.length === 1) {
+        typed += event.key.toLowerCase();
+    }
+
+    typed = typed.slice(-7);
+
+    if (typed === "acoceta") {
+        window.location.href = "acoceta.html";
+    }
+
+});
+</script>
   </body>
 </html>
