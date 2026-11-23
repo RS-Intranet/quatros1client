@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acoceta</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 20px;
+            background: #ffffff;
+            color: #111111;
+            font-family: Calibri, Arial, Helvetica, sans-serif;
+        }
+
+        .container {
+            max-width: 1210px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .logo svg {
+            width: 115px;
+            height: 115px;
+        }
+
+        .logo h1 {
+            font-family: Georgia, serif;
+            font-size: 82px;
+            margin: 0;
+            font-weight: bold;
+            letter-spacing: -3px;
+        }
+
+        .tagline {
+            max-width: 1050px;
+            margin: 0 auto;
+            text-align: left;
+            font-size: 25px;
+            line-height: 1.4;
+        }
+
+        .logo-image {
+            width: 115px;
+            height: 115px;
+            object-fit: contain;
+        }
+
+        main {
+            font-size: 23px;
+            line-height: 1.31;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .logo {
+                gap: 7px;
+            }
+
+            .logo svg {
+                width: 65px;
+                height: 65px;
+            }
+
+            .logo h1 {
+                font-size: 45px;
+                letter-spacing: -2px;
+            }
+
+            .tagline {
+                font-size: 19px;
+            }
+
+            main {
+                font-size: 17px;
+                line-height: 1.45;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header>
+        <div class="logo">
+
+            <!-- Acoceta Logo -->
+            <img src="acoceta-logo.png" alt="Acoceta Logo" class="logo-image">
+
+            <h1>Acoceta</h1>
+        </div>
+
+        <p class="tagline">
+            Acoceta is the new, modern way to run AI on HEDT
+            and server computers like Paliserver, while staying
+            power efficient and fast.
+        </p>
+    </header>
+
+    <main>
+
+        <p>
+            In today's age, AI is our most cutting-edge and relevant
+            advancement, so it makes sense that the parts required to
+            run the massive data centers needed are in an intense
+            shortage, and we have begun to accept that it will always
+            be this way. But we need to adapt.
+        </p>
+
+        <p>
+            Multiple companies have left the consumer PC industry for AI,
+            and the more companies do this, the less accessible computers,
+            and eventually AI, become for consumers. That is why Acoceta
+            has arisen as a solution.
+        </p>
+
+        <p>
+            As AI becomes more and more widespread and common, parts like
+            SSDs and server controllers and CPUs will succumb to massive
+            price hikes. We've already seen this happen with RAM and GPUs,
+            causing Crucial and EVGA to leave their respective markets.
+        </p>
+
+        <p>
+            The key problem is that AI needs large amounts of RAM to hold
+            the model weights during processing, and needs very powerful
+            GPUs to actually do the processing. As GPU manufacturing
+            accelerates, existing die-making utilities will be redirected
+            from CPU manufacturing to GPU fabrication. This will
+            inevitably cause a gargantuan increase in CPU prices, and
+            SSD pricing is already dying to the same fate.
+        </p>
+
+        <p>
+            If we can simply abandon GPUs as an AI computer, then all of
+            our problems will be solved. This is where Acoceta comes in.
+            Acoceta's API and Quatrosi1 both work together to redirect
+            the AI models to the SSD, where inference can be done fast
+            and efficiently.
+        </p>
+
+        <p>
+            As for GPU compute transfer, the API splits up each core on
+            the CPU into 500 smaller, virtual cores, and then registers
+            them to a CUDA directory and forwards it to the model,
+            awaiting processing. At this point, the AI can begin compute,
+            and the weights are forwarded from the SSD to a large ECC RAM
+            pool, letting the AI commence processing and generate tokens.
+        </p>
+
+        <p>
+            This way, the GPU shortage is irrelevant because the only
+            GPU required is a renderer used for display output only,
+            while all AI processing happens on the CPU, RAM, and SSD.
+            Acoceta also eliminates the power efficiency concerns,
+            since most of the processing is done in virtual CPU cores,
+            which are essentially large cores being split up.
+        </p>
+
+        <p>
+            This allows us to route most of the server's power to the CPU,
+            which is much more efficient than a standard GPU, where all
+            the cores are split up.
+        </p>
+
+        <p>
+            With power and GPU problems eliminated, the only remaining
+            challenge is RAM. RAM on an Acoceta server typically looks
+            like 24 sticks of DDR3 with 4GB in each stick, summing up to
+            96GB of total RAM.
+        </p>
+
+        <p>
+            But why DDR3? Older RAM was chosen for the system because
+            it is not affected by the shortage like DDR4 or 5, and speed
+            isn't a problem since the system is usually bottlenecked
+            by the SSD data transfer speed.
+        </p>
+
+        <p>
+            With the new Acoceta systems avoiding the RAM, GPU, and
+            power problems, there is no reason for modern data centers
+            not to switch or at least try implementing the Acoceta
+            systems into their ecosystems.
+        </p>
+
+        <p>
+            But, there is not a functional prototype yet. Revisit this
+            page in 2027 for updates on the upcoming prototypes.
+        </p>
+
+    </main>
+
+</div>
+
+</body>
+</html>
