@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Camera viewer</title>
+  <style>
+    :root { color-scheme: light dark; font: 16px/1.5 system-ui, sans-serif; }
+    body { max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    video { display: block; width: 100%; max-height: 65vh; background: #111; border-radius: 12px; }
+    input { box-sizing: border-box; width: min(100%, 28rem); padding: .65rem; }
+    button { padding: .65rem 1rem; margin: .8rem .4rem .8rem 0; cursor: pointer; }
+    #status { min-height: 1.5em; }
+  </style>
+</head>
+<body>
+  <h1>Camera viewer</h1>
+  <p>Enter the room code shown on the broadcaster’s page.</p>
+  <label for="roomCode">Room code</label><br>
+  <input id="roomCode" autocomplete="off" spellcheck="false" placeholder="Paste the broadcaster’s code">
+  <button id="connect">Connect</button>
+  <button id="disconnect" disabled>Disconnect</button>
+  <p id="status" role="status" aria-live="polite">Not connected.</p>
+  <video id="remoteVideo" autoplay playsinline controls></video>
+
+  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+  <script>
+    const roomInput = document.querySelector('#roomCode');
+    const connectButton = document.querySelector('#connect');
+    const disconnectButton = document.querySelector('#disconnect');
+    const remoteVideo = document.querySelector('#remoteVideo');
+    const statusText = document.querySelector('#status');
+    let peer = null;
+    let call = null;
+
+    function setStatus(message) { statusText.textContent = message; }
+
+    function disconnect() {
+      if (call) { call.close(); call = null; }
+      if (peer) { peer.destroy(); peer = null; }
+      remoteVideo.srcObject = null;
+      connectButton.disabled = false;
+      disconnectButton.disabled = true;
+      setStatus('Disconnected.');
+    }
+
+    connectButton.addEventListener('click', () => {
+      const id = roomInput.value.trim();
+      if (!id) { setStatus('Enter the room code from the broadcaster.'); return; }
+      if (typeof Peer === 'undefined') { setStatus('PeerJS did not load. Check your internet connection and refresh.'); return; }
+
+      connectButton.disabled = true;
+      setStatus('Connecting to PeerJS…');
+      peer = new Peer();
+      peer.on('open', () => {
+        setStatus('Calling the broadcaster…');
+        call = peer.call(id); // Viewer sends no local media.
+        if (!call) {
+          setStatus('Could not start the call. Check the room code and try again.');
+          disconnect();
+          return;
+        }
+        call.on('stream', stream => {
+          remoteVideo.srcObject = stream;
+          setStatus('Connected.');
+          disconnectButton.disabled = false;
+          remoteVideo.play().catch(() => setStatus('Connected. Press Play to view the stream.'));
+        });
+        call.on('close', () => {
+          remoteVideo.srcObject = null;
+          setStatus('The broadcaster ended the stream.');
+          disconnectButton.disabled = false;
+        });
+        call.on('error', error => setStatus('Call error: ' + error.message));
+        // PeerJS signaling offers expire after a short time if the broadcaster is offline.
+        window.setTimeout(() => {
+          if (call && !call.open) setStatus('No answer yet. Confirm the broadcaster is online and the code is correct.');
+        }, 8000);
+      });
+      peer.on('error', error => {
+        setStatus('PeerJS error: ' + error.message);
+        connectButton.disabled = false;
+      });
+    });
+
+    disconnectButton.addEventListener('click', disconnect);
+  </script>
+</body>
+</html>

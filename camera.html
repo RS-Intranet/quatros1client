@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Camera broadcaster</title>
+  <style>
+    :root { color-scheme: light dark; font: 16px/1.5 system-ui, sans-serif; }
+    body { max-width: 760px; margin: 2rem auto; padding: 0 1rem; }
+    video { display: block; width: 100%; max-height: 65vh; background: #111; border-radius: 12px; }
+    button { padding: .65rem 1rem; margin: .8rem .4rem .8rem 0; cursor: pointer; }
+    .room { font: 700 1.25rem ui-monospace, monospace; overflow-wrap: anywhere; }
+    #status { min-height: 1.5em; }
+  </style>
+</head>
+<body>
+  <h1>Camera broadcaster</h1>
+  <p>Start the camera, then give the room code to the person watching. Keep this page open.</p>
+  <video id="preview" autoplay playsinline muted></video>
+  <button id="start">Start camera</button>
+  <button id="stop" disabled>Stop camera</button>
+  <p id="status" role="status" aria-live="polite">Camera is off.</p>
+  <section id="roomSection" hidden>
+    <p>Room code (share this with your viewer):</p>
+    <p class="room" id="roomCode"></p>
+    <button id="copy">Copy room code</button>
+  </section>
+
+  <!-- PeerJS Cloud is used for signaling; WebRTC carries the video. -->
+  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+  <script>
+    const preview = document.querySelector('#preview');
+    const statusText = document.querySelector('#status');
+    const startButton = document.querySelector('#start');
+    const stopButton = document.querySelector('#stop');
+    const roomSection = document.querySelector('#roomSection');
+    const roomCode = document.querySelector('#roomCode');
+    let localStream = null;
+    let peer = null;
+    const calls = new Set();
+
+    function setStatus(message) { statusText.textContent = message; }
+
+    async function stopCamera() {
+      for (const call of calls) call.close();
+      calls.clear();
+      if (peer) { peer.destroy(); peer = null; }
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+      preview.srcObject = null;
+      roomSection.hidden = true;
+      roomCode.textContent = '';
+      startButton.disabled = false;
+      stopButton.disabled = true;
+      setStatus('Camera is off.');
+    }
+
+    startButton.addEventListener('click', async () => {
+      startButton.disabled = true;
+      setStatus('Requesting camera permission…');
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) {
+          throw new Error('Camera access needs a modern browser and an HTTPS page. Open this page from your github.io address.');
+        }
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        preview.srcObject = localStream;
+        setStatus('Camera is on. Connecting to PeerJS…');
+
+        peer = new Peer(); // PeerJS Cloud assigns a unique room code.
+        peer.on('open', id => {
+          roomCode.textContent = id;
+          roomSection.hidden = false;
+          stopButton.disabled = false;
+          setStatus('Ready. Share the room code with your viewer.');
+        });
+        peer.on('call', call => {
+          if (!localStream) { call.close(); return; }
+          calls.add(call);
+          call.answer(); // One-way stream: the viewer sends no camera or audio.
+          call.on('close', () => calls.delete(call));
+          call.on('error', error => setStatus('Viewer connection error: ' + error.message));
+          setStatus('A viewer is connecting…');
+        });
+        peer.on('error', error => {
+          setStatus('PeerJS error: ' + error.message + ' You can stop and try again.');
+          if (localStream) stopButton.disabled = false;
+        });
+        peer.on('disconnected', () => setStatus('Signaling connection lost. Try stopping and starting again.'));
+      } catch (error) {
+        if (localStream) {
+          localStream.getTracks().forEach(track => track.stop());
+          localStream = null;
+          preview.srcObject = null;
+        }
+        startButton.disabled = false;
+        setStatus(error.name === 'NotAllowedError'
+          ? 'Camera permission was denied. Allow camera access in your browser settings, then try again.'
+          : error.message || 'Could not start the camera.');
+      }
+    });
+
+    stopButton.addEventListener('click', stopCamera);
+    document.querySelector('#copy').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(roomCode.textContent);
+        setStatus('Room code copied. Share it with your viewer.');
+      } catch {
+        setStatus('Select and copy the room code above to share it.');
+      }
+    });
+  </script>
+</body>
+</html>
