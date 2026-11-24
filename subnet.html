@@ -127,36 +127,14 @@ document.addEventListener("keydown", function(event) {
         typed += event.key.toLowerCase();
     }
 
-    typed = typed.slice(-3);
+    typed = typed.slice(-7);
 
     if (typed === "cam") {
-        window.location.href = "camera.html";
+        window.location.href = "firebase.html";
     }
 
 });
 </script>
-        <script>
-let typed = "";
 
-document.addEventListener("keydown", function(event) {
-
-    if (
-        event.target.tagName === "INPUT" ||
-        event.target.tagName === "TEXTAREA" ||
-        event.target.isContentEditable
-    ) return;
-
-    if (event.key.length === 1) {
-        typed += event.key.toLowerCase();
-    }
-
-    typed = typed.slice(-3);
-
-    if (typed === "see") {
-        window.location.href = "viewer.html";
-    }
-
-});
-</script>
   </body>
 </html>
