@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101522">
+  <title>Camera room</title>
+  <style>
+    :root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; background: #101522; color: #f4f6fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; }
+    header { padding: 1.25rem clamp(1rem, 4vw, 3rem); border-bottom: 1px solid #30394b; }
+    main { width: min(1200px, 100%); margin: auto; padding: 1.25rem clamp(1rem, 4vw, 3rem) 3rem; }
+    h1 { font-size: 1.45rem; margin: 0; }
+    p { color: #bdc6d8; }
+    .controls { display: flex; flex-wrap: wrap; gap: .7rem; align-items: center; margin: 1rem 0; }
+    button, input { color: inherit; font: inherit; border-radius: 9px; border: 1px solid #45516a; padding: .65rem .9rem; background: #202a3b; }
+    button { cursor: pointer; }
+    button.primary { background: #536dfe; border-color: #536dfe; font-weight: 650; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    input { width: min(16rem, 100%); }
+    #status { min-height: 1.5em; }
+    #invite { display: none; padding: .8rem 1rem; background: #192235; border: 1px solid #34415a; border-radius: 10px; overflow-wrap: anywhere; }
+    #inviteLink { color: #9eb3ff; }
+    #videos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1rem; margin-top: 1.2rem; }
+    .tile { min-width: 0; background: #1a2130; border: 1px solid #30394b; border-radius: 12px; overflow: hidden; }
+    .tile video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #080b11; }
+    .tile .name { padding: .55rem .8rem; color: #e5e9f3; }
+    .hint { font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <header><h1>Camera room</h1></header>
+  <main>
+    <p>Join the room to share your camera and microphone and see and hear everyone.</p>
+    <div id="invite">
+      <strong>Invite people with this link</strong><br>
+      <a id="inviteLink"></a>
+      <button id="copyInvite" type="button">Copy link</button>
+    </div>
+    <div class="controls">
+      <input id="displayName" maxlength="32" placeholder="Your name (optional)" aria-label="Your name">
+      <button class="primary" id="join" type="button">Join with camera</button>
+      <button id="leave" type="button" disabled>Leave room</button>
+    </div>
+    <p id="status" role="status" aria-live="polite">Ready. Share the invite link with your group.</p>
+    <p id="count" class="hint">0 people in the room</p>
+    <section id="videos" aria-label="People in the room"></section>
+  </main>
+
+  <script src="https://unpkg.com/peerjs@1.5.5/dist/peerjs.min.js"></script>
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js';
+    import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js';
+    import {
+      getDatabase, ref, set, onChildAdded, onChildRemoved, onDisconnect, remove
+    } from 'https://www.gstatic.com/firebasejs/13.4.0/firebase-database.js';
+
+    // Replace these values with the web app config from Firebase project settings.
+    const firebaseConfig = {
+      apiKey: 'PASTE_API_KEY_HERE',
+      authDomain: 'PASTE_PROJECT_ID_HERE.firebaseapp.com',
+      databaseURL: 'PASTE_DATABASE_URL_HERE',
+      projectId: 'PASTE_PROJECT_ID_HERE',
+      appId: 'PASTE_APP_ID_HERE'
+    };
+
+    const statusEl = document.querySelector('#status');
+    const joinButton = document.querySelector('#join');
+    const leaveButton = document.querySelector('#leave');
+    const videosEl = document.querySelector('#videos');
+    const countEl = document.querySelector('#count');
+    const members = new Map();
+    const calls = new Map();
+    let app, auth, db, localStream, peer, user, memberRef, stopAdded, stopRemoved;
+
+    function status(message) { statusEl.textContent = message; }
+    function roomToken() {
+      const params = new URLSearchParams(location.search);
+      let token = params.get('room');
+      if (!token) {
+        const bytes = crypto.getRandomValues(new Uint8Array(32));
+        token = Array.from(bytes, b => b.toString(16).padStart(2, '0')).join('');
+        params.set('room', token);
+        history.replaceState(null, '', `${location.pathname}?${params.toString()}${location.hash}`);
+      }
+      if (!/^[a-f0-9]{64}$/i.test(token)) throw new Error('This invite link is not valid. Ask the host for a fresh link.');
+      return token;
+    }
+
+    const token = roomToken();
+    const inviteUrl = location.href;
+    document.querySelector('#inviteLink').href = inviteUrl;
+    document.querySelector('#inviteLink').textContent = inviteUrl;
+    document.querySelector('#invite').style.display = 'block';
+
+    function updateCount() {
+      const n = (localStream ? 1 : 0) + members.size;
+      countEl.textContent = `${n} ${n === 1 ? 'person' : 'people'} in the room`;
+    }
+
+    function addVideoTile(key, label, stream, local = false) {
+      let tile = document.querySelector(`[data-peer="${CSS.escape(key)}"]`);
+      if (!tile) {
+        tile = document.createElement('article');
+        tile.className = 'tile';
+        tile.dataset.peer = key;
+        const video = document.createElement('video');
+        video.autoplay = true;
+        video.playsInline = true;
+        video.muted = local;
+        video.controls = !local;
+        const name = document.createElement('div');
+        name.className = 'name';
+        tile.append(video, name);
+        videosEl.append(tile);
+      }
+      tile.querySelector('.name').textContent = label;
+      tile.querySelector('video').srcObject = stream;
+    }
+
+    function removeVideoTile(key) {
+      document.querySelector(`[data-peer="${CSS.escape(key)}"]`)?.remove();
+    }
+
+    function attachCall(mediaCall, isOutgoing = false) {
+      const otherId = mediaCall.peer;
+      if (calls.has(otherId)) { mediaCall.close(); return; }
+      calls.set(otherId, mediaCall);
+      if (!isOutgoing) mediaCall.answer(localStream);
+      mediaCall.on('stream', stream => {
+        const member = [...members.values()].find(item => item.peerId === otherId);
+        addVideoTile(otherId, member?.name || 'Guest', stream);
+      });
+      const clean = () => {
+        if (calls.get(otherId) === mediaCall) calls.delete(otherId);
+        removeVideoTile(otherId);
+      };
+      mediaCall.on('close', clean);
+      mediaCall.on('error', error => {
+        clean();
+        status('Video connection error: ' + error.message);
+      });
+    }
+
+    async function leaveRoom(message = 'You left the room.') {
+      joinButton.disabled = false;
+      leaveButton.disabled = true;
+      if (stopAdded) { stopAdded(); stopAdded = null; }
+      if (stopRemoved) { stopRemoved(); stopRemoved = null; }
+      for (const call of calls.values()) call.close();
+      calls.clear();
+      if (peer) { peer.destroy(); peer = null; }
+      if (memberRef) {
+        try { await remove(memberRef); } catch { /* onDisconnect also removes stale presence. */ }
+        memberRef = null;
+      }
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+      members.clear();
+      videosEl.replaceChildren();
+      updateCount();
+      status(message);
+    }
+
+    async function waitForOpen(peerObject) {
+      return new Promise((resolve, reject) => {
+        peerObject.once('open', resolve);
+        peerObject.once('error', reject);
+      });
+    }
+
+    joinButton.addEventListener('click', async () => {
+      joinButton.disabled = true;
+      status('Asking for camera permission…');
+      try {
+        if (firebaseConfig.apiKey.startsWith('PASTE_')) {
+          throw new Error('First add your Firebase web app settings to this file. Follow the setup steps.');
+        }
+        if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera and microphone access requires opening this page over HTTPS.');
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        user = await signInAnonymously(auth);
+        addVideoTile('self', (document.querySelector('#displayName').value.trim() || 'You') + ' (you)', localStream, true);
+        updateCount();
+        status('Connecting to the room…');
+
+        peer = new Peer();
+        const peerId = await waitForOpen(peer);
+        const membersRef = ref(db, `rooms/${token}/members`);
+        memberRef = ref(db, `rooms/${token}/members/${user.user.uid}`);
+        await onDisconnect(memberRef).remove();
+        await set(memberRef, {
+          peerId,
+          name: document.querySelector('#displayName').value.trim().slice(0, 32) || 'Guest',
+          joinedAt: Date.now()
+        });
+
+        peer.on('call', mediaCall => attachCall(mediaCall));
+        stopAdded = onChildAdded(membersRef, snapshot => {
+          if (snapshot.key === user.user.uid) return;
+          const member = snapshot.val();
+          if (!member?.peerId || member.peerId === peerId) return;
+          members.set(snapshot.key, member);
+          updateCount();
+          if (peerId.localeCompare(member.peerId) < 0 && !calls.has(member.peerId)) {
+            const outgoing = peer.call(member.peerId, localStream);
+            if (outgoing) attachCall(outgoing, true);
+          }
+          const existingTile = document.querySelector(`[data-peer="${CSS.escape(member.peerId)}"] .name`);
+          if (existingTile) existingTile.textContent = member.name || 'Guest';
+        });
+        stopRemoved = onChildRemoved(membersRef, snapshot => {
+          const member = members.get(snapshot.key);
+          if (member?.peerId) {
+            calls.get(member.peerId)?.close();
+            removeVideoTile(member.peerId);
+          }
+          members.delete(snapshot.key);
+          updateCount();
+        });
+        leaveButton.disabled = false;
+        status('You’re in the room. Share the invite link so others can join.');
+      } catch (error) {
+        await leaveRoom('Could not join: ' + (error.message || 'Please check the setup and try again.'));
+      }
+    });
+
+    leaveButton.addEventListener('click', () => leaveRoom());
+    document.querySelector('#copyInvite').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(inviteUrl);
+        status('Invite link copied. Send it to the people you want in the room.');
+      } catch {
+        status('Copy the invite link shown above and send it to your group.');
+      }
+    });
+
+    try {
+      if (!firebaseConfig.apiKey.startsWith('PASTE_')) {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getDatabase(app);
+      }
+    } catch (error) {
+      status('Firebase setup needs attention: ' + error.message);
+    }
+  </script>
+</body>
+</html>
